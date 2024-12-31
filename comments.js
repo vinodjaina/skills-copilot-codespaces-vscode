@@ -1,17 +1,40 @@
-//create web server
-const express = require("express");
+// Create web server
+const express = require('express');
 const app = express();
-const cors = require("cors");
-app.use(cors());
+const port = 3000;
+
 app.use(express.json());
 
-//create a new endpoint for comments
-app.post("/comments", (req, res) => {
-    console.log(req.body);
-    res.json({ message: "Comment received!" });
+// Import comments data
+const comments = require('./comments.json');
+
+// Create GET /comments endpoint
+app.get('/comments', (req, res) => {
+    res.json(comments);
 });
 
-//start the server
-app.listen(4001, () => {
-    console.log("Server is listening on port 4001");
+// Create POST /comments endpoint
+app.post('/comments', (req, res) => {
+    const newComment = req.body;
+    comments.push(newComment);
+    res.json(newComment);
+});
+
+// Create PUT /comments/:id endpoint
+app.put('/comments/:id', (req, res) => {
+    const id = req.params.id;
+    const newComment = req.body;
+    comments[id] = newComment;
+    res.json(newComment);
+});
+
+// Create DELETE /comments/:id endpoint
+app.delete('/comments/:id', (req, res) => {
+    const id = req.params.id;
+    comments.splice(id, 1);
+    res.sendStatus(204);
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
